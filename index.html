@@ -56,7 +56,8 @@
   .sep{width:1px;height:20px;background:var(--line);margin:0 5px;flex:none}
   .clr{position:relative;width:32px;height:32px;display:grid;place-items:center;border-radius:6px;cursor:pointer;flex:none}
   .clr:hover{background:var(--hover)}
-  .clr span{font-weight:800;line-height:1;padding-bottom:2px;border-bottom:4px solid var(--c)}
+  .clr .bar{position:absolute;left:8px;right:8px;bottom:4px;height:3px;border-radius:2px;background:var(--c)}
+  .clr .ic{margin-bottom:3px}
   .clr input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
 
   /* ================= LAYOUT ================= */
@@ -78,15 +79,16 @@
   #page{width:210mm;max-width:100%;min-height:297mm;background:var(--page);color:var(--pageink);padding:22mm 20mm;
     box-shadow:0 2px 18px rgba(0,0,0,.18);outline:none;font:16px/1.6 Georgia,'Times New Roman',serif;word-wrap:break-word;overflow-wrap:anywhere}
   #page:empty::before{content:"Start typing…";color:#9aa3b2}
-  #page h1{font-size:2em;margin:.6em 0 .3em;line-height:1.2}
-  #page h2{font-size:1.5em;margin:.6em 0 .3em;line-height:1.25}
-  #page h3{font-size:1.2em;margin:.6em 0 .3em}
-  #page p{margin:0 0 .7em}
-  #page blockquote{margin:.8em 0;padding:.2em 1em;border-left:4px solid #b9c3d6;color:#444}
-  #page img{max-width:100%;height:auto}
-  #page table{border-collapse:collapse;width:100%;margin:.6em 0;table-layout:fixed}
-  #page td,#page th{border:1px solid #9aa3b2;padding:6px 8px;min-width:40px;vertical-align:top}
-  #page a{color:#1a5fd0}
+  .doc-body h1{font-size:2em;margin:.6em 0 .3em;line-height:1.2}
+  .doc-body h2{font-size:1.5em;margin:.6em 0 .3em;line-height:1.25}
+  .doc-body h3{font-size:1.2em;margin:.6em 0 .3em}
+  .doc-body p{margin:0 0 .7em}
+  .doc-body blockquote{margin:.8em 0;padding:.2em 1em;border-left:4px solid #b9c3d6;color:#444}
+  .doc-body img{max-width:100%;height:auto}
+  .doc-body table{border-collapse:collapse;width:100%;margin:.6em 0;table-layout:fixed}
+  .doc-body td,.doc-body th{border:1px solid #9aa3b2;padding:6px 8px;vertical-align:top;overflow-wrap:anywhere}
+  .doc-body th{background:#eef1f6;font-weight:700;text-align:left}
+  .doc-body a{color:#1a5fd0}
 
   footer{flex:none;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 14px;align-items:center;padding:6px 14px calc(6px + var(--safe-b));background:var(--panel);border-top:1px solid var(--line);color:var(--muted);font-size:12px}
   footer b{color:var(--ink)}
@@ -120,6 +122,68 @@
   .ck.eq{background:var(--brand);color:#fff;font-weight:700}
   .ck.w2{grid-column:span 2}
   .ck.ins{grid-column:span 4;height:clamp(32px,5.4dvh,42px);font-size:14px;background:transparent;border:1px dashed var(--brand);color:var(--brand);font-weight:600}
+
+
+  /* ================= ICONS ================= */
+  .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;pointer-events:none}
+  .btn:not(.menu){display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .btn.menu{align-items:center;justify-content:center}
+  #tb button{display:inline-flex;align-items:center;justify-content:center}
+  .brand i .ic{width:16px;height:16px}
+  .doc .x{display:inline-flex}
+  .doc .x .ic{width:16px;height:16px}
+  .ck .ic{width:22px;height:22px}
+  #calcClose{display:grid;place-items:center}
+  #calcClose .ic{width:16px;height:16px}
+  .ck.ins{display:flex;align-items:center;justify-content:center;gap:8px}
+  .ck.ins .ic{width:17px;height:17px}
+  .dd-menu button .ic{width:16px;height:16px}
+
+  /* ================= INSERT-TABLE DIALOG ================= */
+  .modal{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px}
+  .modal.open{display:flex}
+  .modal .box{width:min(400px,100%);max-height:100%;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+  .modal h3{margin:0 0 12px;font-size:17px}
+  #tblPick{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;touch-action:none;margin-bottom:8px;user-select:none;-webkit-user-select:none}
+  #tblPick i{aspect-ratio:1;border:1px solid var(--line);border-radius:3px;background:var(--panel)}
+  #tblPick i.on{background:var(--brand2);border-color:var(--brand)}
+  #tblLbl{text-align:center;color:var(--muted);margin-bottom:12px;font-size:13px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .fields label{display:flex;flex-direction:column;gap:4px;color:var(--muted);font-size:12px}
+  .fields input{height:40px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:var(--panel);font-size:16px;color:var(--ink)}
+  .chk{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .acts{display:flex;justify-content:flex-end;gap:8px}
+
+  /* ================= TABLE TOOLS (move / resize like Word) ================= */
+  #canvas{position:relative}
+  #tblUI{position:absolute;left:0;top:0;width:0;height:0;z-index:25}
+  #tblUI .hd{position:absolute;width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.3);touch-action:none;user-select:none;-webkit-user-select:none}
+  #tblUI .hd .ic{width:15px;height:15px}
+  #tblMove,#tblRz{z-index:3}
+  .grip{z-index:1}
+  #tblMove{cursor:grab}
+  #tblRz{width:18px;height:18px;border-radius:50%;border:2px solid #fff;cursor:nwse-resize}
+  #tblBar{position:absolute;display:flex;align-items:center;gap:2px;padding:3px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.25);white-space:nowrap}
+  #tblBar button{width:34px;height:34px;border:0;background:transparent;border-radius:7px;cursor:pointer;display:grid;place-items:center;color:var(--ink)}
+  #tblBar button:hover{background:var(--hover)}
+  #tblBar button.danger:hover{color:#d33}
+  #tblBar .sep{height:24px;margin:0 3px}
+  .grip{position:absolute;touch-action:none}
+  .grip.c{width:14px;cursor:col-resize}
+  .grip.r{height:14px;cursor:row-resize}
+  .grip::after{content:"";position:absolute;background:var(--brand);opacity:0;transition:opacity .15s}
+  .grip.c::after{left:6px;width:2px;top:0;bottom:0}
+  .grip.r::after{top:6px;height:2px;left:0;right:0}
+  .grip:hover::after,.grip.act::after{opacity:.9}
+  #tblUI.dragging .grip,#tblUI.dragging #tblBar,#tblUI.dragging #tblRz{display:none}
+  #dropLine{position:absolute;height:3px;background:var(--brand);border-radius:2px;display:none;z-index:26;pointer-events:none}
+  #page table.moving{opacity:.4}
+  @media (pointer:coarse){
+    .grip.c{width:24px}.grip.r{height:24px}
+    .grip.c::after{left:11px;opacity:.35}.grip.r::after{top:11px;opacity:.35}
+    #tblUI .hd{width:34px;height:34px}#tblRz{width:26px;height:26px}
+  }
+  @media (max-width:600px){ .btn .lbl{display:none} .btn:not(.menu):not(.primary){padding:0 10px} }
 
   /* ================= TABLET (≤ 1024) ================= */
   @media (max-width:1024px){
@@ -183,17 +247,56 @@
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M21 5H9l-6 7 6 7h12z"/><path d="m12 9 4 6M16 9l-4 6"/></symbol>
+<symbol id="i-enter" viewBox="0 0 24 24"><path d="M20 5v8a3 3 0 0 1-3 3H5M9 12l-4 4 4 4"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></symbol>
+<symbol id="i-bold" viewBox="0 0 24 24"><path d="M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z"/></symbol>
+<symbol id="i-italic" viewBox="0 0 24 24"><path d="M19 4h-9M14 20H5M15 4 9 20"/></symbol>
+<symbol id="i-underline" viewBox="0 0 24 24"><path d="M6 4v7a6 6 0 0 0 12 0V4M4 21h16"/></symbol>
+<symbol id="i-strike" viewBox="0 0 24 24"><path d="M16 6a4 4 0 0 0-4-2c-2.5 0-4 1.3-4 3 0 4 8 2.5 8 6.5 0 1.9-1.8 3.5-4.2 3.5A5 5 0 0 1 8 15M3 12h18"/></symbol>
+<symbol id="i-textcolor" viewBox="0 0 24 24"><path d="M6 15 12 3l6 12M8.5 10h7"/></symbol>
+<symbol id="i-highlight" viewBox="0 0 24 24"><path d="m9 11-5 5 4 4 5-5M9 11l6-6 4 4-6 6z"/></symbol>
+<symbol id="i-alignl" viewBox="0 0 24 24"><path d="M3 6h18M3 10h12M3 14h18M3 18h12"/></symbol>
+<symbol id="i-alignc" viewBox="0 0 24 24"><path d="M3 6h18M7 10h10M3 14h18M7 18h10"/></symbol>
+<symbol id="i-alignr" viewBox="0 0 24 24"><path d="M3 6h18M9 10h12M3 14h18M9 18h12"/></symbol>
+<symbol id="i-alignj" viewBox="0 0 24 24"><path d="M3 6h18M3 10h18M3 14h18M3 18h18"/></symbol>
+<symbol id="i-ul" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-ol" viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 5l1.5-1v5M3.5 14h3l-3 4h3"/></symbol>
+<symbol id="i-outdent" viewBox="0 0 24 24"><path d="M3 5h18M11 9.5h10M11 14.5h10M3 19h18M7 9l-3 3 3 3"/></symbol>
+<symbol id="i-indent" viewBox="0 0 24 24"><path d="M3 5h18M11 9.5h10M11 14.5h10M3 19h18M3 9l3 3-3 3"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.7"/><path d="m21 16-5-5-9 9"/></symbol>
+<symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/></symbol>
+<symbol id="i-clear" viewBox="0 0 24 24"><path d="M6 5h12M12 5v14M9 19h6"/><path d="m4 4 16 16"/></symbol>
+<symbol id="i-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
+<symbol id="i-rowadd" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="9" rx="1.5"/><path d="M12 15v6M9 18h6"/></symbol>
+<symbol id="i-coladd" viewBox="0 0 24 24"><rect x="3" y="3" width="9" height="18" rx="1.5"/><path d="M15 12h6M18 9v6"/></symbol>
+<symbol id="i-rowdel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="9" rx="1.5"/><path d="M9 18h6"/></symbol>
+<symbol id="i-coldel" viewBox="0 0 24 24"><rect x="3" y="3" width="9" height="18" rx="1.5"/><path d="M15 12h6"/></symbol>
+</defs></svg>
+
 <header>
-  <button class="btn menu" id="menuBtn" title="My documents" aria-label="My documents">☰</button>
-  <div class="brand"><i>N</i><span>NeW 111</span></div>
+  <button class="btn menu" id="menuBtn" title="My documents" aria-label="My documents"><svg class="ic"><use href="#i-menu"/></svg></button>
+  <div class="brand"><i><svg class="ic"><use href="#i-doc"/></svg></i><span>NeW 111</span></div>
   <input id="title" value="Untitled document" spellcheck="false" aria-label="Document title">
   <span id="status">Saved</span>
   <span class="sp"></span>
-  <button class="btn" id="newBtn">New</button>
-  <button class="btn" id="openBtn">Open</button>
-  <button class="btn" id="calcBtn" title="Calculator" aria-label="Calculator">🧮</button>
+  <button class="btn" id="newBtn" title="New document"><svg class="ic"><use href="#i-plus"/></svg><span class="lbl">New</span></button>
+  <button class="btn" id="openBtn" title="Open a file"><svg class="ic"><use href="#i-folder"/></svg><span class="lbl">Open</span></button>
+  <button class="btn" id="calcBtn" title="Calculator" aria-label="Calculator"><svg class="ic"><use href="#i-calc"/></svg></button>
   <div class="dd" id="dd">
-    <button class="btn primary" id="saveBtn">Save as ▾</button>
+    <button class="btn primary" id="saveBtn" title="Save as"><svg class="ic"><use href="#i-download"/></svg><span>Save as</span><svg class="ic"><use href="#i-chev"/></svg></button>
     <div class="dd-menu">
       <button data-save="pdf">PDF <small>.pdf</small></button>
       <button data-save="doc">Word <small>.doc</small></button>
@@ -206,8 +309,8 @@
 </header>
 
 <div id="tb">
-  <button data-cmd="undo" title="Undo (Ctrl+Z)">↶</button>
-  <button data-cmd="redo" title="Redo (Ctrl+Y)">↷</button>
+  <button data-cmd="undo" title="Undo (Ctrl+Z)"><svg class="ic"><use href="#i-undo"/></svg></button>
+  <button data-cmd="redo" title="Redo (Ctrl+Y)"><svg class="ic"><use href="#i-redo"/></svg></button>
   <span class="sep"></span>
   <select id="block" title="Paragraph style">
     <option value="p">Normal</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option>
@@ -216,27 +319,27 @@
   <select id="font" title="Font family"></select>
   <select id="size" title="Font size (px)"></select>
   <span class="sep"></span>
-  <button data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
-  <button data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
-  <button data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
-  <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
-  <label class="clr" title="Text color"><span style="--c:#d32f2f">A</span><input type="color" id="fore" value="#d32f2f"></label>
-  <label class="clr" title="Highlight"><span style="--c:#ffe14d">▇</span><input type="color" id="back" value="#ffe14d"></label>
+  <button data-cmd="bold" title="Bold (Ctrl+B)"><svg class="ic"><use href="#i-bold"/></svg></button>
+  <button data-cmd="italic" title="Italic (Ctrl+I)"><svg class="ic"><use href="#i-italic"/></svg></button>
+  <button data-cmd="underline" title="Underline (Ctrl+U)"><svg class="ic"><use href="#i-underline"/></svg></button>
+  <button data-cmd="strikeThrough" title="Strikethrough"><svg class="ic"><use href="#i-strike"/></svg></button>
+  <label class="clr" title="Text color" style="--c:#d32f2f"><svg class="ic"><use href="#i-textcolor"/></svg><i class="bar"></i><input type="color" id="fore" value="#d32f2f"></label>
+  <label class="clr" title="Highlight color" style="--c:#ffe14d"><svg class="ic"><use href="#i-highlight"/></svg><i class="bar"></i><input type="color" id="back" value="#ffe14d"></label>
   <span class="sep"></span>
-  <button data-cmd="justifyLeft" title="Align left">⇤</button>
-  <button data-cmd="justifyCenter" title="Center">⇔</button>
-  <button data-cmd="justifyRight" title="Align right">⇥</button>
-  <button data-cmd="justifyFull" title="Justify">☰</button>
+  <button data-cmd="justifyLeft" title="Align left"><svg class="ic"><use href="#i-alignl"/></svg></button>
+  <button data-cmd="justifyCenter" title="Center"><svg class="ic"><use href="#i-alignc"/></svg></button>
+  <button data-cmd="justifyRight" title="Align right"><svg class="ic"><use href="#i-alignr"/></svg></button>
+  <button data-cmd="justifyFull" title="Justify"><svg class="ic"><use href="#i-alignj"/></svg></button>
   <span class="sep"></span>
-  <button data-cmd="insertUnorderedList" title="Bullet list">• List</button>
-  <button data-cmd="insertOrderedList" title="Numbered list">1. List</button>
-  <button data-cmd="outdent" title="Decrease indent">⇠</button>
-  <button data-cmd="indent" title="Increase indent">⇢</button>
+  <button data-cmd="insertUnorderedList" title="Bullet list"><svg class="ic"><use href="#i-ul"/></svg></button>
+  <button data-cmd="insertOrderedList" title="Numbered list"><svg class="ic"><use href="#i-ol"/></svg></button>
+  <button data-cmd="outdent" title="Decrease indent"><svg class="ic"><use href="#i-outdent"/></svg></button>
+  <button data-cmd="indent" title="Increase indent"><svg class="ic"><use href="#i-indent"/></svg></button>
   <span class="sep"></span>
-  <button id="linkBtn" title="Insert link">🔗</button>
-  <button id="imgBtn" title="Insert image">🖼</button>
-  <button id="tableBtn" title="Insert table">▦</button>
-  <button data-cmd="removeFormat" title="Clear formatting">Tx</button>
+  <button id="linkBtn" title="Insert link"><svg class="ic"><use href="#i-link"/></svg></button>
+  <button id="imgBtn" title="Insert image"><svg class="ic"><use href="#i-image"/></svg></button>
+  <button id="tableBtn" title="Insert table"><svg class="ic"><use href="#i-table"/></svg></button>
+  <button data-cmd="removeFormat" title="Clear formatting"><svg class="ic"><use href="#i-clear"/></svg></button>
 </div>
 
 <main>
@@ -245,7 +348,26 @@
     <h4>My documents</h4>
     <div id="list"></div>
   </aside>
-  <div id="canvas"><div id="page" contenteditable="true" spellcheck="true"></div></div>
+  <div id="canvas">
+    <div id="page" class="doc-body" contenteditable="true" spellcheck="true"></div>
+    <div id="tblUI" hidden>
+      <div class="hd" id="tblMove" title="Drag to move the table"><svg class="ic"><use href="#i-move"/></svg></div>
+      <div class="hd" id="tblRz" title="Drag to resize the table"></div>
+      <div id="tblBar">
+        <button data-t="rowadd" title="Add row below"><svg class="ic"><use href="#i-rowadd"/></svg></button>
+        <button data-t="coladd" title="Add column to the right"><svg class="ic"><use href="#i-coladd"/></svg></button>
+        <button data-t="rowdel" title="Delete row"><svg class="ic"><use href="#i-rowdel"/></svg></button>
+        <button data-t="coldel" title="Delete column"><svg class="ic"><use href="#i-coldel"/></svg></button>
+        <span class="sep"></span>
+        <button data-t="left" title="Align table left"><svg class="ic"><use href="#i-alignl"/></svg></button>
+        <button data-t="center" title="Center table"><svg class="ic"><use href="#i-alignc"/></svg></button>
+        <button data-t="right" title="Align table right"><svg class="ic"><use href="#i-alignr"/></svg></button>
+        <span class="sep"></span>
+        <button data-t="del" class="danger" title="Delete table"><svg class="ic"><use href="#i-trash"/></svg></button>
+      </div>
+    </div>
+    <div id="dropLine"></div>
+  </div>
 </main>
 
 <footer>
@@ -253,15 +375,31 @@
   <span>© NeW 111 · All rights reserved by <b>Gurusaran B</b></span>
 </footer>
 
+<div class="modal" id="tblDlg" role="dialog" aria-label="Insert table">
+  <div class="box">
+    <h3>Insert table</h3>
+    <div id="tblPick"></div>
+    <div id="tblLbl">3 × 3 table</div>
+    <div class="fields">
+      <label>Rows<input type="number" id="tRows" min="1" max="100" value="3" inputmode="numeric"></label>
+      <label>Columns<input type="number" id="tCols" min="1" max="20" value="3" inputmode="numeric"></label>
+    </div>
+    <label class="chk"><input type="checkbox" id="tHead"> Header row</label>
+    <div class="acts"><button class="btn" id="tCancel">Cancel</button><button class="btn primary" id="tOk">Insert table</button></div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
 <!-- ============ Calculator (drag the title bar to move) ============ -->
 <div id="calc" tabindex="-1" role="dialog" aria-label="Calculator">
-  <div id="calcHead"><span>Calculator</span><i>drag to move</i><button id="calcClose" aria-label="Close calculator">✕</button></div>
+  <div id="calcHead"><span>Calculator</span><i>drag to move</i><button id="calcClose" aria-label="Close calculator"><svg class="ic"><use href="#i-close"/></svg></button></div>
   <div id="cDisp"><div id="cExpr"></div><div id="cRes">0</div></div>
   <div id="cKeys">
     <button class="ck fn" data-k="C">C</button>
     <button class="ck fn" data-k="(">(</button>
     <button class="ck fn" data-k=")">)</button>
-    <button class="ck fn" data-k="⌫">⌫</button>
+    <button class="ck fn" data-k="⌫" aria-label="Backspace"><svg class="ic"><use href="#i-back"/></svg></button>
     <button class="ck fn" data-k="√">√</button>
     <button class="ck fn" data-k="x²">x²</button>
     <button class="ck fn" data-k="%">%</button>
@@ -275,7 +413,7 @@
     <button class="ck w2" data-k="0">0</button>
     <button class="ck" data-k=".">.</button>
     <button class="ck eq" data-k="=">=</button>
-    <button class="ck ins" id="cIns">Insert result into document</button>
+    <button class="ck ins" id="cIns"><svg class="ic"><use href="#i-enter"/></svg><span>Insert result into document</span></button>
   </div>
 </div>
 
@@ -326,13 +464,18 @@ function syncFont() {
 }
 function restore() {                          // bring focus + the user's selection back to the page
   page.focus();
-  if (lastRange) { const s = getSelection(); s.removeAllRanges(); s.addRange(lastRange); }
+  const s = getSelection();
+  if (lastRange && page.contains(lastRange.startContainer)) { s.removeAllRanges(); s.addRange(lastRange); }
+  else if (!s.rangeCount || !page.contains(s.anchorNode)) {
+    const r = document.createRange(); r.selectNodeContents(page); r.collapse(false); s.removeAllRanges(); s.addRange(r);
+  }
 }
 document.addEventListener('selectionchange', () => {
   const s = getSelection();
   if (s.rangeCount && page.contains(s.anchorNode)) {
     lastRange = s.getRangeAt(0).cloneRange();
     syncToolbar();
+    trackTable();
   }
 });
 
@@ -347,7 +490,7 @@ function persist() {
 }
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 function toast(msg) {
-  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  const t = $('#toast'); if (!t) return; t.textContent = msg; t.classList.add('show');
   clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2400);
 }
 function setStatus(s) { $('#status').textContent = s; $('#status2').textContent = ' · ' + s; }
@@ -378,7 +521,7 @@ function show(id) {
   document.title = d.title + ' – NeW 111';
   localStorage.setItem(CUR, cur);
   lastRange = null;
-  renderList(); updateCount(); syncFont(); dirty = false;
+  setActive(null); renderList(); updateCount(); syncFont(); dirty = false;
   $('#canvas').scrollTop = 0;
   closeDrawer();
 }
@@ -404,7 +547,7 @@ function renderList() {
   $('#list').innerHTML = ids.map(id => {
     const d = docs[id];
     const when = new Date(d.updated).toLocaleDateString([], { day: 'numeric', month: 'short' });
-    return `<div class="doc${id === cur ? ' on' : ''}" data-id="${id}"><div><b>${esc(d.title)}</b><small>${when}</small></div><button class="x" data-del="${id}" title="Delete" aria-label="Delete">×</button></div>`;
+    return `<div class="doc${id === cur ? ' on' : ''}" data-id="${id}"><div><b>${esc(d.title)}</b><small>${when}</small></div><button class="x" data-del="${id}" title="Delete" aria-label="Delete"><svg class="ic"><use href="#i-trash"/></svg></button></div>`;
   }).join('');
 }
 function updateCount() {
@@ -417,6 +560,7 @@ function toggleDrawer() { $('#side').classList.toggle('open'); $('#scrim').class
 
 /* ---------- editing commands ---------- */
 document.execCommand('styleWithCSS', false, false);
+document.execCommand('defaultParagraphSeparator', false, 'p');
 function cmd(c, v) { restore(); document.execCommand(c, false, v); lastRange = getSelection().rangeCount ? getSelection().getRangeAt(0).cloneRange() : lastRange; scheduleSave(); syncToolbar(); }
 $('#tb').addEventListener('mousedown', e => { if (!e.target.closest('select,input')) e.preventDefault(); });   // keep the text selection
 $('#tb').addEventListener('click', e => { const b = e.target.closest('button[data-cmd]'); if (b) cmd(b.dataset.cmd); });
@@ -446,8 +590,8 @@ function applySize(px) {
   scheduleSave(); syncFont();
 }
 function colorCmd(c, v) { document.execCommand('styleWithCSS', false, true); cmd(c, v); document.execCommand('styleWithCSS', false, false); }
-$('#fore').addEventListener('input', e => { e.target.previousElementSibling.style.setProperty('--c', e.target.value); colorCmd('foreColor', e.target.value); });
-$('#back').addEventListener('input', e => { e.target.previousElementSibling.style.setProperty('--c', e.target.value); colorCmd('hiliteColor', e.target.value); });
+$('#fore').addEventListener('input', e => { e.target.parentNode.style.setProperty('--c', e.target.value); colorCmd('foreColor', e.target.value); });
+$('#back').addEventListener('input', e => { e.target.parentNode.style.setProperty('--c', e.target.value); colorCmd('hiliteColor', e.target.value); });
 $('#linkBtn').addEventListener('click', () => {
   let url = prompt('Link address (https://…):', 'https://');
   if (!url || url === 'https://') return;
@@ -458,10 +602,7 @@ $('#linkBtn').addEventListener('click', () => {
   else document.execCommand('createLink', false, url);
   scheduleSave();
 });
-$('#tableBtn').addEventListener('click', () => {
-  const row = '<tr>' + '<td><br></td>'.repeat(3) + '</tr>';
-  restore(); document.execCommand('insertHTML', false, '<table>' + row.repeat(3) + '</table><p><br></p>'); scheduleSave();
-});
+$('#tableBtn').addEventListener('click', openTblDlg);
 $('#imgBtn').addEventListener('click', () => $('#imgFile').click());
 $('#imgFile').addEventListener('change', e => {
   const f = e.target.files[0]; e.target.value = '';
@@ -504,6 +645,327 @@ page.addEventListener('paste', e => {
 titleEl.addEventListener('input', () => { document.title = (titleEl.value || 'Untitled') + ' – NeW 111'; scheduleSave(); });
 titleEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); page.focus(); } });
 
+/* ======================================================================
+   Tables: pick rows × columns, then move / resize them like in Word
+   ====================================================================== */
+const canvas = $('#canvas'), tui = $('#tblUI'), tMove = $('#tblMove'), tRz = $('#tblRz'), tBar = $('#tblBar'), dropLine = $('#dropLine');
+let tbl = null, gripEls = [], op = null;
+
+const cellOf = n => { n = n && (n.nodeType === 3 ? n.parentElement : n); return n && n.closest ? n.closest('td,th') : null; };
+const tableOf = n => { const c = cellOf(n); const t = c && c.closest('table'); return t && page.contains(t) ? t : null; };
+const colsOf = t => [...t.querySelectorAll(':scope>colgroup>col')];
+const pct = c => parseFloat(c.style.width) || 0;
+const contW = () => { const cs = getComputedStyle(page); return page.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); };
+function placeCaret(el) {
+  if (!el) return;
+  const r = document.createRange(); r.selectNodeContents(el); r.collapse(true);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r); lastRange = r.cloneRange();
+}
+
+/* every table keeps its column widths in % so it fits phone, tablet, desktop and print */
+function ensureCols(t) {
+  const first = t.rows[0]; if (!first) return;
+  let n = 0; for (const c of first.cells) n += c.colSpan || 1;
+  let cg = t.querySelector(':scope>colgroup');
+  if (!cg || cg.children.length !== n) {
+    if (cg) cg.remove();
+    cg = document.createElement('colgroup');
+    const tw = t.getBoundingClientRect().width || 1;
+    for (const c of first.cells) {
+      const span = c.colSpan || 1, w = c.getBoundingClientRect().width / span;
+      for (let k = 0; k < span; k++) { const col = document.createElement('col'); col.style.width = (w / tw * 100).toFixed(3) + '%'; cg.appendChild(col); }
+    }
+    t.insertBefore(cg, t.firstChild);
+  }
+  t.style.tableLayout = 'fixed';
+  if (!t.style.width) t.style.width = '100%';
+}
+
+/* ---------- insert dialog ---------- */
+const dlg = $('#tblDlg'), pick = $('#tblPick'), tR = $('#tRows'), tC = $('#tCols'), tLbl = $('#tblLbl');
+const PR = 8, PC = 10;
+for (let i = 0; i < PR * PC; i++) pick.appendChild(document.createElement('i'));
+const clampN = (v, lo, hi) => Math.max(lo, Math.min(hi, Math.round(+v) || lo));
+function paintPick() {
+  const r = clampN(tR.value, 1, 100), c = clampN(tC.value, 1, 20);
+  [...pick.children].forEach((el, i) => el.classList.toggle('on', Math.floor(i / PC) < r && i % PC < c));
+  tLbl.textContent = r + ' × ' + c + ' table (rows × columns)';
+}
+function pickAt(e) {
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  if (!el || el.parentNode !== pick) return;
+  const i = [...pick.children].indexOf(el);
+  tR.value = Math.floor(i / PC) + 1; tC.value = i % PC + 1; paintPick();
+}
+let picking = false;
+pick.addEventListener('pointerdown', e => { picking = true; pickAt(e); });
+pick.addEventListener('pointermove', e => { if (picking || e.pointerType === 'mouse') pickAt(e); });
+addEventListener('pointerup', () => { picking = false; });
+tR.addEventListener('input', paintPick); tC.addEventListener('input', paintPick);
+function openTblDlg() { dlg.classList.add('open'); paintPick(); }
+function closeTblDlg() { dlg.classList.remove('open'); }
+$('#tCancel').addEventListener('click', closeTblDlg);
+dlg.addEventListener('mousedown', e => { if (e.target === dlg) closeTblDlg(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && dlg.classList.contains('open')) closeTblDlg(); });
+$('#tOk').addEventListener('click', () => {
+  const r = clampN(tR.value, 1, 100), c = clampN(tC.value, 1, 20);
+  closeTblDlg(); insertTable(r, c, $('#tHead').checked);
+});
+function insertTable(r, c, head) {
+  const w = (100 / c).toFixed(3) + '%';
+  let h = '<table data-new="1" style="width:100%"><colgroup>' + `<col style="width:${w}">`.repeat(c) + '</colgroup><tbody>';
+  for (let i = 0; i < r; i++) h += '<tr>' + (head && i === 0 ? '<th><br></th>' : '<td><br></td>').repeat(c) + '</tr>';
+  h += '</tbody></table><p><br></p>';
+  restore();
+  document.execCommand('insertHTML', false, h);
+  const t = page.querySelector('table[data-new]');
+  if (t) { t.removeAttribute('data-new'); ensureCols(t); placeCaret(t.querySelector('td,th')); setActive(t); }
+  scheduleSave();
+  toast('Table ' + r + ' × ' + c + ' inserted');
+}
+
+/* ---------- active table + overlay ---------- */
+function setActive(t) {
+  if (t === tbl) { placeUI(); return; }
+  tbl = t; buildGrips(); placeUI();
+}
+function trackTable() {
+  const s = getSelection(); if (!s.rangeCount || !page.contains(s.anchorNode)) return;
+  const t = tableOf(s.anchorNode);
+  if (t) ensureCols(t);
+  setActive(t);
+}
+function buildGrips() {
+  gripEls.forEach(g => g.remove()); gripEls = [];
+  if (!tbl) return;
+  const n = colsOf(tbl).length, m = tbl.rows.length;
+  for (let i = 0; i < n - 1; i++) addGrip('c', i);
+  for (let i = 0; i < m; i++) addGrip('r', i);
+}
+function addGrip(kind, i) {
+  const g = document.createElement('div'); g.className = 'grip ' + kind; g.dataset.i = i;
+  tui.appendChild(g); gripEls.push(g); g.addEventListener('pointerdown', gripDown);
+}
+function placeUI() {
+  if (!tbl || !page.contains(tbl)) { tbl = null; tui.hidden = true; return; }
+  tui.hidden = false;
+  const cols = colsOf(tbl);
+  if (gripEls.length !== Math.max(cols.length - 1, 0) + tbl.rows.length) buildGrips();
+  const cr = canvas.getBoundingClientRect(), tr = tbl.getBoundingClientRect();
+  const x = tr.left - cr.left + canvas.scrollLeft, y = tr.top - cr.top + canvas.scrollTop, w = tr.width, h = tr.height;
+  tMove.style.left = Math.max(2, x - 30) + 'px'; tMove.style.top = Math.max(2, y - 30) + 'px';
+  tRz.style.left = (x + w - tRz.offsetWidth / 2) + 'px'; tRz.style.top = (y + h - tRz.offsetHeight / 2) + 'px';
+  const bw = tBar.offsetWidth || 330;
+  tBar.style.left = Math.max(4, Math.min(x, canvas.scrollWidth - bw - 4)) + 'px';
+  let by = y - 48; if (by < 2) by = y + h + 10;
+  tBar.style.top = by + 'px';
+  const tot = cols.reduce((a, c) => a + pct(c), 0) || 100;
+  gripEls.forEach(g => {
+    const i = +g.dataset.i;
+    if (g.classList.contains('c')) {
+      const e = cols.slice(0, i + 1).reduce((a, c) => a + pct(c), 0) / tot * w;
+      g.style.left = (x + e - g.offsetWidth / 2) + 'px'; g.style.top = y + 'px'; g.style.height = h + 'px';
+    } else {
+      const rr = tbl.rows[i].getBoundingClientRect();
+      g.style.top = (rr.bottom - cr.top + canvas.scrollTop - g.offsetHeight / 2) + 'px'; g.style.left = x + 'px'; g.style.width = w + 'px';
+    }
+  });
+}
+tui.addEventListener('mousedown', e => e.preventDefault());       // keep the text cursor in the cell
+new ResizeObserver(() => placeUI()).observe(page);
+addEventListener('resize', () => placeUI());
+let uiRaf = 0;
+const schedUI = () => { if (uiRaf) return; uiRaf = requestAnimationFrame(() => { uiRaf = 0; placeUI(); }); };
+new MutationObserver(schedUI).observe(page, { childList: true, subtree: true, attributes: true, characterData: true });
+
+/* ---------- column / row border dragging ---------- */
+function gripDown(e) {
+  e.preventDefault();
+  const g = e.currentTarget; g.setPointerCapture(e.pointerId); g.classList.add('act');
+  const i = +g.dataset.i;
+  if (g.classList.contains('c')) {
+    const cols = colsOf(tbl);
+    op = { k: 'c', g, i, x: e.clientX, tw: tbl.getBoundingClientRect().width, a: pct(cols[i]), b: pct(cols[i + 1]), cols };
+  } else {
+    const tr = tbl.rows[i]; op = { k: 'r', g, tr, y: e.clientY, h: tr.getBoundingClientRect().height };
+  }
+  g.addEventListener('pointermove', gripMove); g.addEventListener('pointerup', gripUp); g.addEventListener('pointercancel', gripUp);
+}
+function gripMove(e) {
+  if (!op) return;
+  if (op.k === 'c') {
+    let d = (e.clientX - op.x) / op.tw * 100;
+    d = Math.max(-(op.a - 4), Math.min(op.b - 4, d));
+    op.cols[op.i].style.width = (op.a + d).toFixed(3) + '%';
+    op.cols[op.i + 1].style.width = (op.b - d).toFixed(3) + '%';
+  } else op.tr.style.height = Math.max(24, op.h + e.clientY - op.y) + 'px';
+  placeUI();
+}
+function gripUp(e) {
+  const g = e.currentTarget;
+  g.removeEventListener('pointermove', gripMove); g.removeEventListener('pointerup', gripUp); g.removeEventListener('pointercancel', gripUp);
+  g.classList.remove('act'); op = null; scheduleSave();
+}
+
+/* ---------- corner handle: resize the whole table ---------- */
+tRz.addEventListener('pointerdown', e => {
+  if (!tbl) return; e.preventDefault(); tRz.setPointerCapture(e.pointerId);
+  const r = tbl.getBoundingClientRect();
+  op = { k: 'z', x: e.clientX, y: e.clientY, w: r.width, h: r.height, cw: contW(), rows: [...tbl.rows].map(t => t.getBoundingClientRect().height) };
+});
+tRz.addEventListener('pointermove', e => {
+  if (!op || op.k !== 'z') return;
+  const nw = Math.min(op.cw, Math.max(80, op.w + e.clientX - op.x));
+  tbl.style.width = (nw / op.cw * 100).toFixed(2) + '%';
+  const dy = e.clientY - op.y;
+  if (Math.abs(dy) > 6) { const k = Math.max(.3, (op.h + dy) / op.h); [...tbl.rows].forEach((t, i) => { t.style.height = Math.max(24, op.rows[i] * k) + 'px'; }); }
+  placeUI();
+});
+const endRz = () => { if (op && op.k === 'z') { op = null; scheduleSave(); } };
+tRz.addEventListener('pointerup', endRz); tRz.addEventListener('pointercancel', endRz);
+
+/* ---------- move handle: drag the table to another place in the page ---------- */
+function dropTarget(y) {
+  const kids = [...page.children].filter(k => k !== tbl);
+  if (!kids.length) return null;
+  for (const k of kids) { const r = k.getBoundingClientRect(); if (y < r.top + r.height / 2) return { blk: k, before: true }; }
+  return { blk: kids[kids.length - 1], before: false };
+}
+function showDrop(tg) {
+  if (!tg) { dropLine.style.display = 'none'; return; }
+  const cr = canvas.getBoundingClientRect(), pr = page.getBoundingClientRect(), r = tg.blk.getBoundingClientRect();
+  dropLine.style.display = 'block';
+  dropLine.style.left = (pr.left - cr.left + canvas.scrollLeft) + 'px'; dropLine.style.width = pr.width + 'px';
+  dropLine.style.top = ((tg.before ? r.top : r.bottom) - cr.top + canvas.scrollTop - 1) + 'px';
+}
+tMove.addEventListener('pointerdown', e => {
+  if (!tbl) return; e.preventDefault(); tMove.setPointerCapture(e.pointerId);
+  op = { k: 'm', tg: null }; tui.classList.add('dragging'); tbl.classList.add('moving'); tMove.style.cursor = 'grabbing';
+});
+tMove.addEventListener('pointermove', e => {
+  if (!op || op.k !== 'm') return;
+  const cr = canvas.getBoundingClientRect();
+  if (e.clientY < cr.top + 50) canvas.scrollTop -= 14; else if (e.clientY > cr.bottom - 50) canvas.scrollTop += 14;
+  op.tg = dropTarget(e.clientY); showDrop(op.tg);
+});
+function endMove() {
+  if (!op || op.k !== 'm') return;
+  const tg = op.tg; op = null;
+  dropLine.style.display = 'none'; tui.classList.remove('dragging'); tMove.style.cursor = '';
+  if (tbl) {
+    tbl.classList.remove('moving');
+    if (tg) {
+      if (tg.before) tg.blk.before(tbl); else tg.blk.after(tbl);
+      if (!tbl.nextElementSibling) { const p = document.createElement('p'); p.innerHTML = '<br>'; tbl.after(p); }
+      scheduleSave();
+    }
+  }
+  placeUI();
+}
+tMove.addEventListener('pointerup', endMove); tMove.addEventListener('pointercancel', endMove);
+
+/* ---------- table toolbar actions ---------- */
+function curCell() {
+  const s = getSelection();
+  let c = s.rangeCount && cellOf(s.anchorNode);
+  if (!c && lastRange) c = cellOf(lastRange.startContainer);
+  return c && tbl && tbl.contains(c) ? c : null;
+}
+const colIdx = cell => { let i = 0; for (const x of cell.parentElement.cells) { if (x === cell) break; i += x.colSpan || 1; } return i; };
+function finish(cell) { buildGrips(); placeCaret(cell); placeUI(); scheduleSave(); }
+function addRow() {
+  const c = curCell() || tbl.rows[tbl.rows.length - 1].cells[0], tr = c.parentElement, nr = document.createElement('tr');
+  for (const x of tr.cells) { const nc = document.createElement('td'); nc.colSpan = x.colSpan; nc.innerHTML = '<br>'; nr.appendChild(nc); }
+  tr.after(nr); finish(nr.cells[0]);
+}
+function addCol() {
+  const c = curCell() || tbl.rows[0].cells[0], i = colIdx(c), cols = colsOf(tbl);
+  const half = pct(cols[i]) / 2, nc = document.createElement('col');
+  cols[i].style.width = half.toFixed(3) + '%'; nc.style.width = half.toFixed(3) + '%'; cols[i].after(nc);
+  for (const r of tbl.rows) {
+    const cell = r.cells[Math.min(i, r.cells.length - 1)], n = document.createElement(cell.tagName.toLowerCase());
+    n.innerHTML = '<br>'; cell.after(n);
+  }
+  finish(c.nextElementSibling);
+}
+function delRow() {
+  if (tbl.rows.length < 2) return delTable();
+  const c = curCell(), tr = c ? c.parentElement : tbl.rows[tbl.rows.length - 1];
+  const nx = tr.nextElementSibling || tr.previousElementSibling; tr.remove();
+  finish(nx && nx.cells[0]);
+}
+function delCol() {
+  const cols = colsOf(tbl); if (cols.length < 2) return delTable();
+  const c = curCell(), i = c ? colIdx(c) : cols.length - 1, p = pct(cols[i]);
+  cols[i].remove();
+  colsOf(tbl).forEach(x => { x.style.width = (pct(x) * 100 / (100 - p)).toFixed(3) + '%'; });
+  for (const r of tbl.rows) { const cell = r.cells[Math.min(i, r.cells.length - 1)]; if (cell) cell.remove(); }
+  finish(tbl.rows[0].cells[Math.min(i, tbl.rows[0].cells.length - 1)]);
+}
+function delTable() {
+  const t = tbl, p = document.createElement('p'); p.innerHTML = '<br>';
+  t.replaceWith(p); tbl = null; buildGrips(); placeCaret(p); placeUI(); scheduleSave();
+}
+function alignTable(a) {
+  tbl.style.marginLeft = a === 'left' ? '0' : 'auto';
+  tbl.style.marginRight = a === 'right' ? '0' : 'auto';
+  placeUI(); scheduleSave();
+}
+tBar.addEventListener('click', e => {
+  const b = e.target.closest('button[data-t]'); if (!b || !tbl) return;
+  ({ rowadd: addRow, coladd: addCol, rowdel: delRow, coldel: delCol, del: delTable,
+     left: () => alignTable('left'), center: () => alignTable('center'), right: () => alignTable('right') })[b.dataset.t]();
+});
+/* Tab moves between cells; Tab in the last cell adds a row (like Word) */
+page.addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const c = cellOf(getSelection().anchorNode); if (!c || !page.contains(c)) return;
+  e.preventDefault();
+  const t = c.closest('table'), cells = [...t.querySelectorAll('td,th')], i = cells.indexOf(c) + (e.shiftKey ? -1 : 1);
+  if (i >= cells.length) { setActive(t); addRow(); } else if (i >= 0) placeCaret(cells[i]);
+});
+
+/* ---------- PDF: builds a real .pdf file and downloads it (print dialog only as a fallback) ---------- */
+function loadScript(src) {
+  return new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = () => rej(new Error('load ' + src)); document.head.appendChild(el); });
+}
+async function ensurePdfLib() {
+  if (window.html2pdf) return;
+  const urls = ['https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js', 'https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js'];
+  for (const u of urls) { try { await loadScript(u); if (window.html2pdf) return; } catch (e) { /* try next */ } }
+  throw new Error('PDF library not available');
+}
+let pdfBusy = false;
+async function savePdf() {
+  if (pdfBusy) return;
+  pdfBusy = true;
+  const n = fname(); let holder, wrap;
+  toast('Creating PDF…');
+  try {
+    await ensurePdfLib();
+    wrap = document.createElement('div');                       // off-screen stage (not part of the render)
+    wrap.style.cssText = 'position:fixed;left:-10000px;top:0;width:680px;overflow:hidden';
+    holder = document.createElement('div');                     // the element that becomes the PDF
+    holder.className = 'doc-body';
+    holder.style.cssText = 'width:680px;background:#fff;color:#111;font:16px/1.6 Georgia,"Times New Roman",serif;overflow-wrap:anywhere';
+    holder.innerHTML = page.innerHTML;
+    holder.querySelectorAll('.moving').forEach(t => t.classList.remove('moving'));
+    wrap.appendChild(holder); document.body.appendChild(wrap);
+    await html2pdf().set({
+      margin: [15, 15, 15, 15], filename: n + '.pdf',
+      image: { type: 'jpeg', quality: .96 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', 'h1', 'h2', 'h3', 'blockquote'] }
+    }).from(holder).save();
+    toast('Saved ' + n + '.pdf');
+  } catch (err) {
+    console.error(err);
+    toast('PDF download is not available right now – opening the print dialog (choose “Save as PDF”)');
+    setTimeout(() => { const old = document.title; document.title = n; try { window.print(); } catch (e) { } document.title = old; }, 900);
+  } finally { if (wrap) wrap.remove(); pdfBusy = false; }
+}
+
 /* ---------- export ---------- */
 const fname = () => (titleEl.value.trim() || 'document').replace(/[\\/:*?"<>|]+/g, '_');
 function download(content, name, type) {
@@ -516,11 +978,7 @@ const wrapHtml = (body, word) => `<!DOCTYPE html><html${word ? ' xmlns:o="urn:sc
 function saveAs(kind) {
   saveNow();
   const n = fname();
-  if (kind === 'pdf') {
-    const old = document.title; document.title = n;
-    toast('Choose “Save as PDF” as the destination');
-    setTimeout(() => { window.print(); document.title = old; }, 350);
-  }
+  if (kind === 'pdf') { savePdf(); }
   else if (kind === 'doc') { download('﻿' + wrapHtml(page.innerHTML, true), n + '.doc', 'application/msword'); toast('Saved ' + n + '.doc'); }
   else if (kind === 'txt') { download(page.innerText.replace(/[ ​]/g, ' '), n + '.txt', 'text/plain;charset=utf-8'); toast('Saved ' + n + '.txt'); }
   else if (kind === 'html') { download(wrapHtml(page.innerHTML, false), n + '.html', 'text/html;charset=utf-8'); toast('Saved ' + n + '.html'); }
@@ -701,7 +1159,7 @@ if (cur && docs[cur]) show(cur);
 else {
   const ids = Object.keys(docs);
   if (ids.length) { ids.sort((a, b) => docs[b].updated - docs[a].updated); show(ids[0]); }
-  else newDoc('<h1>Welcome to NeW 111</h1><p>Start typing here. Your work is <b>saved automatically</b> in this browser.</p><p>Use <b>New</b> for a blank document, <b>Open</b> to edit a .txt, .html or .doc file, <b>Save as</b> to export to PDF, Word, text or HTML, and the <b>🧮</b> button for a calculator you can drag anywhere.</p>', 'Welcome');
+  else newDoc('<h1>Welcome to NeW 111</h1><p>Start typing here. Your work is <b>saved automatically</b> in this browser.</p><p>Use <b>New</b> for a blank document, <b>Open</b> to edit a .txt, .html or .doc file, <b>Save as</b> to export to PDF, Word, text or HTML, and the <b>Calculator</b> button for a calculator you can drag anywhere.</p>', 'Welcome');
 }
 syncFont();
 })();
