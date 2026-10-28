@@ -9,8 +9,8 @@
 <link rel="icon" href="new.png">
 <style>
   :root{
-    --brand:#2b5fd9; --brand2:#e8effd;
-    --bg:#e9edf3; --panel:#FFFFF0; --ink:#1d2330; --muted:#6a7487; --line:#d8dee8; --hover:#f0f3f8;
+    --brand:#FFFFF0; --brand2:#e8effd;
+    --bg:#e9edf3; --panel:#FFFAFA; --ink:#1d2330; --muted:#6a7487; --line:#d8dee8; --hover:#f0f3f8;
     --page:#ffffff; --pageink:#111;
     --safe-b:env(safe-area-inset-bottom,0px);
   }
@@ -236,7 +236,7 @@
   }
 
   .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;letter-spacing:.2px;color:var(--brand);white-space:nowrap}
-.brand-logo{height:32px;width:auto;max-width:140px;object-fit:contain;display:block}
+.brand-logo{height:32px;width:auto;max-width:140px;object-fit:contain;display:block;border-radius: 5px;}
 @media (max-width:600px){ .brand-logo{height:28px} }
 
   /* ================= PRINT / SAVE AS PDF ================= */
@@ -295,7 +295,7 @@
   <button class="btn menu" id="menuBtn" title="My documents" aria-label="My documents"><svg class="ic"><use href="#i-menu"/></svg></button>
  <div class="brand">
   <img src="new.png" alt="NeW 111 logo" class="brand-logo">
-  <span>NeW 111</span>
+  <span>NEW 111</span>
 </div>
   <input id="title" value="Untitled document" spellcheck="false" aria-label="Document title">
   <span id="status">Saved</span>
