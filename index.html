@@ -186,6 +186,19 @@
   }
   @media (max-width:600px){ .btn .lbl{display:none} .btn:not(.menu):not(.primary){padding:0 10px} }
 
+  /* ================= PDF VIEWER (read only) ================= */
+  #pdfView{position:fixed;inset:0;z-index:85;background:var(--bg);display:none;flex-direction:column}
+  #pdfView.open{display:flex}
+  #pdfBar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+  #pdfName{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ro{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 9px;white-space:nowrap}
+  .ro .ic{width:13px;height:13px}
+  #pdfScroll{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:12px;-webkit-overflow-scrolling:touch;user-select:none;-webkit-user-select:none}
+  .pg{background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.25);flex:none;margin:0 auto}
+  .pg canvas{display:block}
+  @media (max-width:600px){ #pdfInfo{display:none} #pdfScroll{padding:8px} }
+  @media print{ #pdfView{display:none!important} }
+
   /* ================= TABLET (≤ 1024) ================= */
   @media (max-width:1024px){
     aside{width:210px}
@@ -289,6 +302,9 @@
 <symbol id="i-coladd" viewBox="0 0 24 24"><rect x="3" y="3" width="9" height="18" rx="1.5"/><path d="M15 12h6M18 9v6"/></symbol>
 <symbol id="i-rowdel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="9" rx="1.5"/><path d="M9 18h6"/></symbol>
 <symbol id="i-coldel" viewBox="0 0 24 24"><rect x="3" y="3" width="9" height="18" rx="1.5"/><path d="M15 12h6"/></symbol>
+<symbol id="i-zoomin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
+<symbol id="i-zoomout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M8 11h6"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
 </defs></svg>
 
 <header>
@@ -312,7 +328,7 @@
       <button data-save="html">Web page <small>.html</small></button>
     </div>
   </div>
-  <input type="file" id="file" accept=".txt,.html,.htm,.doc,.md" hidden>
+  <input type="file" id="file" accept=".txt,.html,.htm,.doc,.docx,.md,.pdf" hidden>
   <input type="file" id="imgFile" accept="image/*" hidden>
 </header>
 
@@ -398,6 +414,18 @@
 </div>
 
 <div id="toast" role="status" aria-live="polite"></div>
+
+<div id="pdfView" role="dialog" aria-label="PDF viewer (read only)">
+  <div id="pdfBar">
+    <span id="pdfName">document.pdf</span>
+    <span class="ro"><svg class="ic"><use href="#i-lock"/></svg>Read only</span>
+    <span id="pdfInfo" class="ro"></span>
+    <button class="btn" id="pdfOut" title="Zoom out" aria-label="Zoom out"><svg class="ic"><use href="#i-zoomout"/></svg></button>
+    <button class="btn" id="pdfIn" title="Zoom in" aria-label="Zoom in"><svg class="ic"><use href="#i-zoomin"/></svg></button>
+    <button class="btn primary" id="pdfClose" title="Close" aria-label="Close PDF"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+  <div id="pdfScroll"></div>
+</div>
 
 <!-- ============ Calculator (drag the title bar to move) ============ -->
 <div id="calc" tabindex="-1" role="dialog" aria-label="Calculator">
@@ -996,11 +1024,112 @@ $('#saveBtn').addEventListener('click', e => { e.stopPropagation(); dd.classList
 dd.addEventListener('click', e => { const b = e.target.closest('[data-save]'); if (b) { dd.classList.remove('open'); saveAs(b.dataset.save); } });
 document.addEventListener('click', () => dd.classList.remove('open'));
 
+/* ======================================================================
+   Open Word (.docx) = editable (size limited)   |   Open PDF = read-only viewer
+   ====================================================================== */
+const MAX_DOCX = 2 * 1024 * 1024;        // editable Word files: 2 MB
+const MAX_PDF = 15 * 1024 * 1024;        // read-only PDFs: 15 MB
+const MAX_HTML = 1500000;                // converted document must fit the browser's storage
+const mb = n => (n / 1048576).toFixed(1) + ' MB';
+
+async function loadFirst(check, urls) {
+  if (check()) return null;
+  for (const u of urls) { try { await loadScript(u); if (check()) return u; } catch (e) { /* try next */ } }
+  throw new Error('library not available');
+}
+function cleanHtml(html) {
+  const d = new DOMParser().parseFromString(html, 'text/html');
+  d.querySelectorAll('script,style,meta,link,iframe,object,embed,xml').forEach(n => n.remove());
+  d.querySelectorAll('*').forEach(n => {
+    [...n.attributes].forEach(a => { if (/^on/i.test(a.name) || (a.name === 'href' && /^\s*javascript:/i.test(a.value))) n.removeAttribute(a.name); });
+    n.removeAttribute('class'); n.removeAttribute('id');
+  });
+  d.querySelectorAll('img:not([src])').forEach(n => n.remove());
+  return d.body.innerHTML;
+}
+async function openDocx(f, base) {
+  if (f.size > MAX_DOCX) return toast('This Word file is ' + mb(f.size) + '. Editable files are limited to ' + mb(MAX_DOCX) + ' to keep the layout and editing smooth.');
+  toast('Opening Word file…');
+  try {
+    await loadFirst(() => window.mammoth, ['https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js', 'https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js']);
+    const buf = await f.arrayBuffer();
+    let r = await mammoth.convertToHtml({ arrayBuffer: buf }), html = r.value, note = '';
+    if (html.length > MAX_HTML) {                                   // too heavy: drop pictures
+      r = await mammoth.convertToHtml({ arrayBuffer: buf }, { convertImage: mammoth.images.imgElement(() => Promise.resolve({ src: '' })) });
+      html = r.value.replace(/<img[^>]*src=""[^>]*>/g, ''); note = ' Images were removed to keep it light.';
+    }
+    if (html.length > MAX_HTML) return toast('This document has too much content to edit here. Try a shorter file.');
+    if (!html.trim()) return toast('No readable text found in this Word file.');
+    newDoc(cleanHtml(html), base);
+    toast('Opened ' + f.name + (r.messages.length ? ' – some complex formatting was simplified.' : '.') + note);
+  } catch (err) { console.error(err); toast('Could not read this Word file. Check your internet connection and try again.'); }
+}
+
+/* ---------- PDF: read-only viewer (pages are pictures, nothing can be edited) ---------- */
+const pv = $('#pdfView'), ps = $('#pdfScroll');
+let pdfDoc = null, pdfZoom = 1, pio = null;
+async function openPdf(f) {
+  if (f.size > MAX_PDF) return toast('This PDF is ' + mb(f.size) + '. The viewer is limited to ' + mb(MAX_PDF) + '.');
+  toast('Opening PDF…');
+  try {
+    const used = await loadFirst(() => window.pdfjsLib, ['https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js']);
+    if (!pdfjsLib.GlobalWorkerOptions.workerSrc) pdfjsLib.GlobalWorkerOptions.workerSrc = (used || 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js').replace('pdf.min.js', 'pdf.worker.min.js');
+    const buf = await f.arrayBuffer();
+    pdfDoc = await pdfjsLib.getDocument({ data: buf }).promise;
+    $('#pdfName').textContent = f.name; pdfZoom = 1;
+    pv.classList.add('open'); await buildPdf();
+  } catch (err) {
+    console.error(err);
+    toast(err && err.name === 'PasswordException' ? 'This PDF is password protected.' : 'Could not open this PDF. Check your internet connection and try again.');
+  }
+}
+async function buildPdf() {
+  if (pio) pio.disconnect();
+  ps.innerHTML = '';
+  const first = await pdfDoc.getPage(1), v1 = first.getViewport({ scale: 1 });
+  const fit = Math.max(200, Math.min(ps.clientWidth - 28, 900)), scale = fit / v1.width * pdfZoom;
+  $('#pdfInfo').textContent = pdfDoc.numPages + (pdfDoc.numPages === 1 ? ' page' : ' pages') + ' · ' + Math.round(pdfZoom * 100) + '%';
+  pio = new IntersectionObserver(es => es.forEach(en => {
+    if (en.isIntersecting && !en.target.dataset.done) { en.target.dataset.done = '1'; drawPage(en.target, scale); }
+  }), { root: ps, rootMargin: '700px 0px' });
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    const d = document.createElement('div'); d.className = 'pg'; d.dataset.n = i;
+    d.style.width = v1.width * scale + 'px'; d.style.height = v1.height * scale + 'px';
+    ps.appendChild(d); pio.observe(d);
+  }
+}
+async function drawPage(div, scale) {
+  const page = await pdfDoc.getPage(+div.dataset.n), vp = page.getViewport({ scale });
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), c = document.createElement('canvas');
+  c.width = Math.floor(vp.width * dpr); c.height = Math.floor(vp.height * dpr);
+  c.style.width = vp.width + 'px'; c.style.height = vp.height + 'px';
+  div.style.width = vp.width + 'px'; div.style.height = vp.height + 'px'; div.appendChild(c);
+  await page.render({ canvasContext: c.getContext('2d'), viewport: vp, transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null }).promise;
+}
+function zoomPdf(d) { pdfZoom = Math.min(3, Math.max(.5, pdfZoom + d)); if (pdfDoc) buildPdf(); }
+function closePdf() { pv.classList.remove('open'); if (pio) pio.disconnect(); ps.innerHTML = ''; if (pdfDoc) { pdfDoc.destroy(); pdfDoc = null; } }
+$('#pdfIn').addEventListener('click', () => zoomPdf(.25));
+$('#pdfOut').addEventListener('click', () => zoomPdf(-.25));
+$('#pdfClose').addEventListener('click', closePdf);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && pv.classList.contains('open')) closePdf(); });
+
+/* route a chosen file by its real type */
+async function openAny(f) {
+  const ext = (f.name.split('.').pop() || '').toLowerCase(), base = f.name.replace(/\.[^.]+$/, '');
+  const head = new Uint8Array(await f.slice(0, 8).arrayBuffer());
+  const zip = head[0] === 0x50 && head[1] === 0x4B, ole = head[0] === 0xD0 && head[1] === 0xCF, pdf = head[0] === 0x25 && head[1] === 0x50;
+  if (ext === 'pdf' || pdf) { openPdf(f); return true; }
+  if (ext === 'docx' || (ext === 'doc' && zip)) { openDocx(f, base); return true; }
+  if (ext === 'doc' && ole) { toast('This is an old Word 97-2003 .doc file. Open it in Word and save it as .docx, then open it here.'); return true; }
+  return false;
+}
+
 /* ---------- open file ---------- */
 $('#openBtn').addEventListener('click', () => $('#file').click());
 $('#file').addEventListener('change', async e => {
   const f = e.target.files[0]; e.target.value = '';
   if (!f) return;
+  if (await openAny(f)) return;
   const text = await f.text();
   const base = f.name.replace(/\.[^.]+$/, '');
   let html;
@@ -1167,7 +1296,7 @@ if (cur && docs[cur]) show(cur);
 else {
   const ids = Object.keys(docs);
   if (ids.length) { ids.sort((a, b) => docs[b].updated - docs[a].updated); show(ids[0]); }
-  else newDoc('<h1>Welcome to NeW 111</h1><p>Start typing here. Your work is <b>saved automatically</b> in this browser.</p><p>Use <b>New</b> for a blank document, <b>Open</b> to edit a .txt, .html or .doc file, <b>Save as</b> to export to PDF, Word, text or HTML, and the <b>Calculator</b> button for a calculator you can drag anywhere.</p>', 'Welcome');
+  else newDoc('<h1>Welcome to NeW 111</h1><p>Start typing here. Your work is <b>saved automatically</b> in this browser.</p><p>Use <b>New</b> for a blank document, <b>Open</b> to edit a .txt, .html, .doc or .docx file (PDFs open read-only), <b>Save as</b> to export to PDF, Word, text or HTML, and the <b>Calculator</b> button for a calculator you can drag anywhere.</p>', 'Welcome');
 }
 syncFont();
 })();
